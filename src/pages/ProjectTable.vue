@@ -6,6 +6,7 @@
         <th>Project Name</th>
         <th>Start Date</th>
         <th>End Date</th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -14,6 +15,11 @@
         <td>{{ project.projectName }}</td>
         <td>{{ formatDate(project.startDate) }}</td>
         <td>{{ formatDate(project.endDate) }}</td>
+        <td>
+          <button class="btn btn-danger btn-sm" @click="$emit('deleteProject', project.projectId)">
+            Delete
+          </button>
+        </td>
       </tr>
     </tbody>
   </table>

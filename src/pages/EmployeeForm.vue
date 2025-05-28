@@ -1,4 +1,10 @@
 <template>
+  <!-- Success Alert Banner -->
+  <div v-if="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+    {{ successMessage }}
+    <button type="button" class="btn-close" @click="successMessage = ''" aria-label="Close"></button>
+  </div>
+
   <form @submit.prevent="onSubmit" class="mb-5">
     <div class="row">
       <!-- Basic Fields with Labels -->
@@ -13,8 +19,8 @@
           required
         />
       </div>
-      
-       <!-- Department Dropdown -->
+
+      <!-- Department Dropdown -->
       <div class="col-md-4 mb-3">
         <label for="department" class="form-label fw-bold">Department</label>
         <select id="department" v-model="form.department" class="form-control" required>
@@ -44,20 +50,19 @@
           required
         />
       </div>
-      
+
       <!-- Project Dropdown -->
-<div class="col-md-4 mb-3">
-  <label for="project" class="form-label fw-bold">Project</label>
-  <select id="project" v-model="form.projectId" class="form-control" required>
-    <option disabled value="">Select Project</option>
-    <option v-for="project in projects" :key="project.projectId" :value="project.projectId">
-      {{ project.projectName }}
-    </option>
-  </select>
-</div>
+      <div class="col-md-4 mb-3">
+        <label for="project" class="form-label fw-bold">Project</label>
+        <select id="project" v-model="form.projectId" class="form-control" required>
+          <option disabled value="">Select Project</option>
+          <option v-for="project in projects" :key="project.projectId" :value="project.projectId">
+            {{ project.projectName }}
+          </option>
+        </select>
+      </div>
 
       <!-- Employee Details -->
-      <h5 class="mt-4">Employee Details</h5>
       <div class="col-md-4 mb-3">
         <label for="dateOfBirth" class="form-label fw-bold">Date of Birth</label>
         <input
@@ -68,22 +73,21 @@
         />
       </div>
       <div class="col-md-4 mb-3">
-  <label for="maritalStatus" class="form-label fw-bold">Marital Status</label>
-  <select
-    id="maritalStatus"
-    v-model="form.employeeDetails.maritalStatus"
-    class="form-control"
-    required
-  >
-    <option disabled value="">Select Marital Status</option>
-    <option v-for="status in maritalStatuses" :key="status" :value="status">
-      {{ status }}
-    </option>
-  </select>
-</div>
+        <label for="maritalStatus" class="form-label fw-bold">Marital Status</label>
+        <select
+          id="maritalStatus"
+          v-model="form.employeeDetails.maritalStatus"
+          class="form-control"
+          required
+        >
+          <option disabled value="">Select Marital Status</option>
+          <option v-for="status in maritalStatuses" :key="status" :value="status">
+            {{ status }}
+          </option>
+        </select>
+      </div>
 
       <!-- Address -->
-      <h5 class="mt-4">Address</h5>
       <div class="col-md-4 mb-3" v-for="field in addressFields" :key="field.model">
         <label :for="field.model" class="form-label fw-bold">{{ field.placeholder }}</label>
         <input
@@ -99,7 +103,6 @@
   </form>
 </template>
 
-
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import type { EmployeeDto } from '../types/EmployeeDto'
@@ -113,6 +116,7 @@ const designations = ['INTERN', 'ASSOCIATE', 'SENIOR_ENGINEER', 'MANAGER', 'DIRE
 const maritalStatuses = ['Single', 'Married', 'Divorced', 'Widowed']
 
 const projects = ref<ProjectDto[]>([])
+const successMessage = ref('')
 
 onMounted(async () => {
   try {
@@ -123,7 +127,7 @@ onMounted(async () => {
   }
 })
 
-const form = ref<EmployeeDto>({
+const form = ref<EmployeeDto & { projectId: number | null }>({
   firstName: '',
   lastName: '',
   email: '',
@@ -166,7 +170,12 @@ const onSubmit = async () => {
   try {
     const res = await createEmployee(form.value)
     emit('employeeCreated', res.data)
-    alert('Employee created successfully!')
+
+    successMessage.value = 'Employee created successfully!'
+    setTimeout(() => {
+      successMessage.value = ''
+    }, 3000)
+
     Object.assign(form.value, {
       firstName: '',
       lastName: '',

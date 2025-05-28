@@ -1,9 +1,9 @@
+<!-- components/ManagerMapping.vue -->
 <template>
-  <div class="container mt-5">
-    <h3 class="mb-4">Manager-Employee Mappings</h3>
-
-    <table class="table table-bordered table-hover">
-      <thead class="table-light">
+  <div class="container mt-4">
+    <h3 class="mb-3">Manager-Employee Mappings</h3>
+    <table class="table table-bordered">
+      <thead>
         <tr>
           <th>Employee ID</th>
           <th>Employee Name</th>
@@ -14,7 +14,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="mapping in mappings" :key="mapping.employeeId">
+        <tr v-for="mapping in mappingsToShow" :key="mapping.employeeId">
           <td>{{ mapping.employeeId }}</td>
           <td>{{ mapping.employeeName }}</td>
           <td>{{ mapping.designation }}</td>
@@ -36,20 +36,32 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { getAllHierarchies, removeManager } from '../api/employeeHierarchyApi'
 import type { EmployeeHierarchyDto } from '../types/EmployeeHierarchyDto'
 
+const props = defineProps<{
+  filteredMappings?: EmployeeHierarchyDto[] | null
+}>()
+
 const mappings = ref<EmployeeHierarchyDto[]>([])
+const mappingsToShow = ref<EmployeeHierarchyDto[]>([])
 
 const loadMappings = async () => {
   try {
     const res = await getAllHierarchies()
     mappings.value = res.data.filter((m) => m.managerId !== null)
+    updateVisibleMappings()
   } catch (err) {
-    console.error('Error fetching manager mappings:', err)
+    console.error('Error fetching mappings:', err)
   }
 }
+
+const updateVisibleMappings = () => {
+  mappingsToShow.value = props.filteredMappings ?? mappings.value
+}
+
+watch(() => props.filteredMappings, updateVisibleMappings)
 
 const handleRemoveManager = async (employeeId: number) => {
   const confirmed = confirm('Are you sure you want to remove this employee\'s manager?')
@@ -57,11 +69,7 @@ const handleRemoveManager = async (employeeId: number) => {
 
   try {
     await removeManager(employeeId)
-    const mapping = mappings.value.find((m) => m.employeeId === employeeId)
-    if (mapping) {
-      mapping.managerId = null
-      mapping.managerName = null
-    }
+    await loadMappings()
     alert('Manager removed successfully!')
   } catch (err) {
     console.error('Error removing manager:', err)
@@ -70,4 +78,6 @@ const handleRemoveManager = async (employeeId: number) => {
 }
 
 onMounted(loadMappings)
+
+defineExpose({ loadMappings })
 </script>

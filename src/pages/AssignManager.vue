@@ -3,7 +3,7 @@
     <h3 class="mb-4">Assign Manager</h3>
 
     <div class="mb-3">
-      <label class="form-label">Select Employee</label>
+      <label class="form-label fw-bold" >Select Employee</label>
       <select v-model="selectedEmployeeId" class="form-select">
         <option :value="null">-- Select Employee --</option>
         <option v-for="e in employees" :key="e.employeeId" :value="e.employeeId">
@@ -13,7 +13,7 @@
     </div>
 
     <div class="mb-3">
-      <label class="form-label">Select Manager</label>
+      <label class="form-label fw-bold">Select Manager</label>
       <select v-model="selectedManagerId" class="form-select">
         <option :value="null">-- Select Manager --</option>
         <option
@@ -41,13 +41,16 @@ import { assignManager } from '../api/employeeHierarchyApi'
 import type { EmployeeDto } from '../types/EmployeeDto'
 import type { AssignManagerRequestDto } from '../types/AssignManagerRequestDto'
 
+const emit = defineEmits(['assigned'])
+
 const employees = ref<EmployeeDto[]>([])
 const selectedEmployeeId = ref<number | null>(null)
 const selectedManagerId = ref<number | null>(null)
 const successMessage = ref<string>('')
 
 const filteredManagers = computed(() => 
-employees.value.filter((e) => e.employeeId !== selectedEmployeeId.value))
+  employees.value.filter(e => e.employeeId !== selectedEmployeeId.value)
+)
 
 onMounted(async () => {
   try {
@@ -72,6 +75,7 @@ const assign = async () => {
   try {
     await assignManager(payload)
     successMessage.value = 'Manager assigned successfully!'
+    emit('assigned') // ✅ trigger refresh in parent
   } catch (error) {
     console.error('Error assigning manager:', error)
     alert('Failed to assign manager.')

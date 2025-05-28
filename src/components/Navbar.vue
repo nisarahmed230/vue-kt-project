@@ -10,10 +10,7 @@
           <router-link class="nav-link" to="/projects">Projects</router-link>
         </li>
         <li class="nav-item">
-          <router-link class="nav-link" to="/assign-manager">Assign Manager</router-link>
-        </li>
-        <li class="nav-item">
-          <router-link class="nav-link" to="/manager-mappings">Manager Mappings</router-link>
+          <router-link class="nav-link" to="/employee-hierarchy">Employee Hierarchy</router-link>
         </li>
       </ul>
     </div>
