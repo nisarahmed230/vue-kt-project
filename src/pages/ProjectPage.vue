@@ -18,8 +18,10 @@ import ProjectForm from './ProjectForm.vue'
 import ProjectTable from './ProjectTable.vue'
 import { getAllProjects, deleteProject, getProjectsWithNoEmployees } from '../api/projectApi'
 import type { ProjectDto } from '../types/ProjectDto'
+import { useToast } from 'vue-toastification'
 
 const projects = ref<ProjectDto[]>([])
+const toast = useToast()
 
 const fetchProjects = async () => {
   try {
@@ -39,16 +41,13 @@ const fetchProjectsNoEmployees = async () => {
 }
 
 const handleDelete = async (id: number) => {
-  const confirmed = confirm('Are you sure you want to delete this project?')
-  if (!confirmed) return
-
   try {
     await deleteProject(id)
     projects.value = projects.value.filter(p => p.projectId !== id)
-    alert('Project deleted successfully!')
+    toast.success('Project deleted successfully!')
   } catch (error) {
+    toast.error('Error deleting project.')
     console.error('Failed to delete project:', error)
-    alert('Error deleting project.')
   }
 }
 

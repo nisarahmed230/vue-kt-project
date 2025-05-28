@@ -1,10 +1,4 @@
 <template>
-  <!-- Success Alert Banner -->
-  <div v-if="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
-    {{ successMessage }}
-    <button type="button" class="btn-close" @click="successMessage = ''" aria-label="Close"></button>
-  </div>
-
   <form @submit.prevent="onSubmit" class="mb-5">
     <div class="row">
       <!-- Basic Fields with Labels -->
@@ -109,6 +103,7 @@ import type { EmployeeDto } from '../types/EmployeeDto'
 import { createEmployee } from '../api/employeeApi'
 import { getAllProjects } from '../api/projectApi'
 import type { ProjectDto } from '../types/ProjectDto'
+import { useToast } from 'vue-toastification'
 
 const emit = defineEmits(['employeeCreated'])
 const departments = ['HR', 'FINANCE', 'ENGINEERING', 'SALES', 'MARKETING']
@@ -116,7 +111,8 @@ const designations = ['INTERN', 'ASSOCIATE', 'SENIOR_ENGINEER', 'MANAGER', 'DIRE
 const maritalStatuses = ['Single', 'Married', 'Divorced', 'Widowed']
 
 const projects = ref<ProjectDto[]>([])
-const successMessage = ref('')
+
+const toast = useToast()
 
 onMounted(async () => {
   try {
@@ -170,11 +166,7 @@ const onSubmit = async () => {
   try {
     const res = await createEmployee(form.value)
     emit('employeeCreated', res.data)
-
-    successMessage.value = 'Employee created successfully!'
-    setTimeout(() => {
-      successMessage.value = ''
-    }, 3000)
+    toast.success('Employee created successfully!')
 
     Object.assign(form.value, {
       firstName: '',
@@ -199,8 +191,8 @@ const onSubmit = async () => {
       projectId: null,
     })
   } catch (error) {
+    toast.error('Failed to create employee.')
     console.error(error)
-    alert('Error creating employee.')
   }
 }
 </script>

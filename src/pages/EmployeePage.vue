@@ -32,10 +32,13 @@ import { getAllEmployees,
     getHighestSalaryEmployees,
     getAboveAvgSalaryEmployees } from '../api/employeeApi'
 import type { EmployeeDto } from '../types/EmployeeDto'
+import { useToast } from 'vue-toastification'
 
 const employees = ref<EmployeeDto[]>([])
 const deptFilter = ref('')
 const projectFilter = ref<number | null>(null)
+
+const toast = useToast()
 
 const loadEmployees = async () => {
   const res = await getAllEmployees()
@@ -47,16 +50,13 @@ const addEmployee = (newEmp: EmployeeDto) => {
 }
 
 const handleDelete = async (id: number) => {
-  const confirmed = confirm('Are you sure you want to delete this employee?')
-  if (!confirmed) return
-
   try {
     await deleteEmployee(id)
     employees.value = employees.value.filter((emp) => emp.employeeId !== id)
-    alert('Employee deleted successfully!')
+    toast.success('Employee deleted successfully!')
   } catch (error) {
+    toast.error('Failed to delete employee.')
     console.error(error)
-    alert('Failed to delete employee.')
   }
 }
 

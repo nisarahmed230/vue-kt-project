@@ -31,11 +31,14 @@ import AssignManager from './AssignManager.vue'
 import ManagerMapping from './ManagerMapping.vue'
 import { getEmployeesByManagerId, getManagerByEmployeeId } from '../api/employeeHierarchyApi'
 import type { EmployeeHierarchyDto } from '../types/EmployeeHierarchyDto'
+import { useToast } from 'vue-toastification'
 
 const mappingRef = ref<InstanceType<typeof ManagerMapping> | null>(null)
 const filterEmployeeId = ref<number | null>(null)
 const filterManagerId = ref<number | null>(null)
 const filteredMappings = ref<EmployeeHierarchyDto[] | null>(null)
+
+const toast = useToast()
 
 const refreshMappings = () => {
   mappingRef.value?.loadMappings()
@@ -52,7 +55,7 @@ const applyFilters = async () => {
       filteredMappings.value = res
     }
   } catch (err) {
-    alert('No results found or invalid input.')
+    toast.error('No results found or invalid input.')
     console.error(err)
   }
 }

@@ -40,8 +40,10 @@
 import { ref } from 'vue'
 import type { ProjectDto } from '../types/ProjectDto'
 import { createProject } from '../api/projectApi'
+import { useToast } from 'vue-toastification'
 
 const emit = defineEmits(['projectCreated'])
+const toast = useToast()
 
 const form = ref<ProjectDto>({
   projectName: '',
@@ -53,11 +55,11 @@ const onSubmit = async () => {
   try {
     const res = await createProject(form.value)
     emit('projectCreated', res.data)
-    alert('Project created successfully!')
+    toast.success('Project created successfully!')
     form.value = { projectName: '', startDate: '', endDate: '' }
   } catch (error) {
+    toast.error('Error creating project.')
     console.error(error)
-    alert('Error creating project.')
   }
 }
 </script>

@@ -27,10 +27,6 @@
     </div>
 
     <button class="btn btn-primary" @click="assign">Assign Manager</button>
-
-    <div class="mt-3" v-if="successMessage">
-      <div class="alert alert-success">{{ successMessage }}</div>
-    </div>
   </div>
 </template>
 
@@ -40,13 +36,13 @@ import { getAllEmployees } from '../api/employeeApi'
 import { assignManager } from '../api/employeeHierarchyApi'
 import type { EmployeeDto } from '../types/EmployeeDto'
 import type { AssignManagerRequestDto } from '../types/AssignManagerRequestDto'
+import { useToast } from 'vue-toastification'
 
 const emit = defineEmits(['assigned'])
-
+const toast = useToast()
 const employees = ref<EmployeeDto[]>([])
 const selectedEmployeeId = ref<number | null>(null)
 const selectedManagerId = ref<number | null>(null)
-const successMessage = ref<string>('')
 
 const filteredManagers = computed(() => 
   employees.value.filter(e => e.employeeId !== selectedEmployeeId.value)
@@ -74,11 +70,11 @@ const assign = async () => {
 
   try {
     await assignManager(payload)
-    successMessage.value = 'Manager assigned successfully!'
-    emit('assigned') // ✅ trigger refresh in parent
+    toast.success('Manager assigned successfully!')
+    emit('assigned')
   } catch (error) {
+    toast.error('Failed to assign manager.')
     console.error('Error assigning manager:', error)
-    alert('Failed to assign manager.')
   }
 }
 </script>

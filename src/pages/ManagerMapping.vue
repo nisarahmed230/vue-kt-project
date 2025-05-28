@@ -39,6 +39,9 @@
 import { ref, onMounted, watch } from 'vue'
 import { getAllHierarchies, removeManager } from '../api/employeeHierarchyApi'
 import type { EmployeeHierarchyDto } from '../types/EmployeeHierarchyDto'
+import { useToast } from 'vue-toastification';
+
+const toast = useToast()
 
 const props = defineProps<{
   filteredMappings?: EmployeeHierarchyDto[] | null
@@ -64,16 +67,13 @@ const updateVisibleMappings = () => {
 watch(() => props.filteredMappings, updateVisibleMappings)
 
 const handleRemoveManager = async (employeeId: number) => {
-  const confirmed = confirm('Are you sure you want to remove this employee\'s manager?')
-  if (!confirmed) return
-
   try {
     await removeManager(employeeId)
     await loadMappings()
-    alert('Manager removed successfully!')
+    toast.success('Manager removed successfully!')
   } catch (err) {
+    toast.error('Failed to remove manager.')
     console.error('Error removing manager:', err)
-    alert('Failed to remove manager.')
   }
 }
 
