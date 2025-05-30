@@ -2,7 +2,7 @@
 <template>
   <div class="container mt-4">
     <h3 class="mb-3">Manager-Employee Mappings</h3>
-    <table class="table table-bordered">
+    <table class="table table-hover table-bordered rounded shadow-sm overflow-hidden">
       <thead>
         <tr>
           <th>Employee ID</th>

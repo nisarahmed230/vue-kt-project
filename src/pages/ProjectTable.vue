@@ -1,5 +1,5 @@
 <template>
-  <table class="table table-bordered">
+  <table class="table table-hover table-bordered rounded shadow-sm overflow-hidden">
     <thead class="table-light">
       <tr>
         <th>Project ID</th>

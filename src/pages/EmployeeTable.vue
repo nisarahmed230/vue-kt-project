@@ -1,7 +1,8 @@
 <template>
   <div v-if="employees.length">
-    <table class="table table-bordered">
-      <thead class="table-dark">
+    <div class="table-responsive">
+      <table class="table table-hover table-bordered rounded shadow-sm overflow-hidden">
+      <thead class="table-light">
         <tr>
           <th>ID</th>
           <th>Name</th>
@@ -9,7 +10,6 @@
           <th>Phone</th>
           <th>Department</th>
           <th>Designation</th>
-          <th>City</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -19,26 +19,49 @@
           <td>{{ capitalize(emp.firstName) }} {{ capitalize(emp.lastName) }}</td>
           <td>{{ emp.email }}</td>
           <td>{{ emp.phoneNumber }}</td>
-          <td>{{ emp.department }}</td>
-          <td>{{ emp.designation }}</td>
-          <td>{{ emp.employeeDetails?.address?.city }}</td>
+          <td>{{ formatTitleCase(emp.department) }}</td>
+          <td>{{ formatTitleCase(emp.designation) }}</td>
           <td>
-            <button @click="$emit('deleteEmployee', emp.employeeId)" class="btn btn-danger btn-sm">
-              Delete
-            </button>
+           <div class="d-flex gap-2">
+            <button @click="$emit('deleteEmployee', emp.employeeId)" class="btn btn-danger btn-sm">Delete</button>
+            <button class="btn btn-info btn-sm" @click="openModal(emp.employeeId!)">Show</button>
+           </div>
           </td>
         </tr>
       </tbody>
     </table>
+    </div>
   </div>
   <div v-else>
     <p>No employees found.</p>
   </div>
+  <EmployeeDetailsModal :visible="modalVisible" @close="modalVisible = false" />
 </template>
 
 <script setup lang="ts">
-import { capitalize } from 'vue';
+import { capitalize, ref } from 'vue';
 import type { EmployeeDto } from '../types/EmployeeDto'
+import { useEmployeeDetailsStore } from '../stores/employeeDetailsStore';
+import EmployeeDetailsModal from './EmployeeDetailsModal.vue';
+
+const modalVisible = ref(false)
+const store = useEmployeeDetailsStore()
+
+function openModal(id: number) {
+  modalVisible.value = true
+  store.fetchEmployeeById(id)
+}
+
+function formatTitleCase(text: string | undefined): string {
+    if (!text) return ''
+    else if (text==="HR") return 'HR'
+    return text
+    .toLowerCase()
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
+}
+
 
 defineProps<{
   employees: EmployeeDto[]
