@@ -23,8 +23,8 @@
           <td>{{ formatTitleCase(emp.designation) }}</td>
           <td>
            <div class="d-flex gap-2">
+            <button class="btn btn-info btn-sm" @click="openModal(emp.employeeId!)">Show</button>            
             <button @click="$emit('deleteEmployee', emp.employeeId)" class="btn btn-danger btn-sm">Delete</button>
-            <button class="btn btn-info btn-sm" @click="openModal(emp.employeeId!)">Show</button>
            </div>
           </td>
         </tr>

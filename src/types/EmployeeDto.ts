@@ -7,7 +7,7 @@ export interface EmployeeDto {
   lastName: string
   email: string
   phoneNumber: string
-  hireDate: string // use ISO string for LocalDate
+  hireDate: string 
   salary: number
   jobId: string
   department: string

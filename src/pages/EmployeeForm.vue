@@ -48,9 +48,9 @@
       <!-- Project Dropdown -->
       <div class="col-md-4 mb-3">
         <label for="project" class="form-label fw-bold">Project</label>
-        <select id="project" v-model="form.projectId" class="form-control" required>
+        <select id="project" v-model="form.project" class="form-control" required>
           <option disabled value="">Select Project</option>
-          <option v-for="project in projects" :key="project.projectId" :value="project.projectId">
+          <option v-for="project in projects" :key="project.projectId" :value="project">
             {{ project.projectName }}
           </option>
         </select>
@@ -124,7 +124,7 @@ onMounted(async () => {
   }
 })
 
-const form = ref<EmployeeDto & { projectId: number | null }>({
+const form = ref<EmployeeDto>({
   firstName: '',
   lastName: '',
   email: '',
@@ -144,7 +144,7 @@ const form = ref<EmployeeDto & { projectId: number | null }>({
       zipCode: '',
     },
   },
-  projectId: null,
+  project: null,
 })
 
 const basicFields = [
@@ -189,7 +189,7 @@ const onSubmit = async () => {
           zipCode: '',
         },
       },
-      projectId: null,
+      project: null,
     })
   } catch (error) {
     toast.error('Failed to create employee.')

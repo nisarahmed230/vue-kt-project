@@ -3,8 +3,8 @@
     <h2 class="mb-4">Project Management</h2>
 
     <div class="mb-3 d-flex gap-2">
-      <button class="btn btn-primary" @click="fetchProjects">All Projects</button>
-      <button class="btn btn-warning" @click="fetchProjectsNoEmployees">No-Employee Projects</button>
+      <button data-test="all-projects-btn" class="btn btn-primary" @click="fetchProjects">All Projects</button>
+      <button data-test="no-employee-projects-btn" class="btn btn-warning" @click="fetchProjectsNoEmployees">No-Employee Projects</button>
     </div>
 
     <ProjectForm @projectCreated="fetchProjects" />
