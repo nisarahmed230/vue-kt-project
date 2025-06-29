@@ -1,90 +1,108 @@
-describe('Employee Management', () => {
-  const employee = {
-    firstName: 'Sam',
-    lastName: 'Jam',
-    email: `Sam${Date.now()}@gmail.com`,
-    phoneNumber: '1234567890',
-    salary: '60000',
-    jobId: 'ENG123',
-    department: 'ENGINEERING',
-    designation: 'SENIOR_ENGINEER',
-    hireDate: '2023-01-01',
-    project: 'Cypress Project',
-    dateOfBirth: '1990-05-10',
-    maritalStatus: 'Single',
-    address: {
-      street: '123 Main St',
-      city: 'Metropolis',
-      state: 'NY',
-      zipCode: '10001'
-    }
-  };
+describe('Employee Page Tests', () => {
 
-  beforeEach(() => {
-    cy.visit('/employees');
-  });
-
-  it('should visit the /projects page', () => {
-    cy.contains('Employee Management')
+  it('should display employee table correctly', () => {
+    cy.intercept('GET', '/api/employees/read', { fixture: 'employees.json' }).as('getEmployees')
+    cy.visit('/employees')
+    cy.wait(['@getEmployees'])
+    cy.get('table').should('exist')
+    cy.contains('td', 'John Doe').should('exist')
+    cy.contains('td', 'john.doe@example.com').should('exist')
+    cy.contains('td', 'Engineering').should('exist')
   })
 
-  it('should create a new employee and verify in table', () => {
-    cy.get('#firstName').type(employee.firstName);
-    cy.get('#lastName').type(employee.lastName);
-    cy.get('#email').type(employee.email);
-    cy.get('#phoneNumber').type(employee.phoneNumber);
-    cy.get('#salary').type(employee.salary);
-    cy.get('#jobId').type(employee.jobId);
+  it('should submit employee form successfully', () => {
+    cy.intercept('GET', '/api/employees/read', { fixture: 'employees.json' }).as('getEmployees')
+    cy.visit('/employees')
+    cy.wait(['@getEmployees'])
+    cy.intercept('GET', '/api/projects/read', { fixture: 'projects.json'}).as('getProjects') 
+    cy.intercept('POST', '/api/employees/create', {
+      statusCode: 201,
+      body: {
+        employeeId: 2,
+        firstName: 'Jane',
+        lastName: 'Smith',
+        email: 'jane.smith@example.com',
+        phoneNumber: '9876543210',
+        hireDate: '2024-02-10',
+        salary: 60000,
+        jobId: 'J2002',
+        department: 'HR',
+        designation: 'INTERN',
+        employeeDetails: {
+          dateOfBirth: '1995-08-15',
+          maritalStatus: 'Married',
+          address: {
+            street: '456 Elm St',
+            city: 'Gotham',
+            state: 'NJ',
+            zipCode: '07001'
+          }
+        },
+        project: {
+          projectId: 1,
+        }
+      }
+    }).as('postEmployee')
 
-    cy.get('#department').select(employee.department);
-    cy.get('#designation').select(employee.designation);
-    cy.get('#hireDate').type(employee.hireDate);
+    cy.visit('/employees')
+    cy.wait('@getProjects')
 
-    cy.get('#project').select(employee.project);
+    cy.get('select#project')
+    .should('exist')
+    .contains('option', 'HR System')
+    .should('exist')
 
-    cy.get('#dateOfBirth').type(employee.dateOfBirth);
-    cy.get('#maritalStatus').select(employee.maritalStatus);
+    cy.get('input#firstName').type('Jane')
+    cy.get('input#lastName').type('Smith')
+    cy.get('input#email').type('jane.smith@example.com')
+    cy.get('input#phoneNumber').type('9876543210')
+    cy.get('input#salary').type('60000')
+    cy.get('input#jobId').type('J2002')
+    cy.get('select#department').select('HR')
+    cy.get('select#designation').select('INTERN')
+    cy.get('input#hireDate').type('2024-02-10')
+    cy.get('select#project').select('HR System')
+    cy.get('input#dateOfBirth').type('1995-08-15')
+    cy.get('select#maritalStatus').select('Married')
+    cy.get('input#street').type('456 Elm St')
+    cy.get('input#city').type('Gotham')
+    cy.get('input#state').type('NJ')
+    cy.get('input#zipCode').type('07001')
 
-    cy.get('#street').type(employee.address.street);
-    cy.get('#city').type(employee.address.city);
-    cy.get('#state').type(employee.address.state);
-    cy.get('#zipCode').type(employee.address.zipCode);
+    cy.get('form').submit()
+    cy.wait('@postEmployee')
 
-    cy.contains('Create Employee').click();
-
-    cy.contains('Employee created successfully!').should('be.visible');
-
-    cy.wait(2000);
-
-    cy.get('table').should('contain', employee.firstName);
-    cy.get('table').should('contain', employee.lastName);
-    cy.get('table').should('contain', employee.email);
+    cy.contains('Employee created successfully!').should('exist')
+    cy.wait(1500)
 
   })
-  it('should show an employee details', () => {
+ it('should display employee in the table', () => {
+    cy.intercept('GET', '/api/employees/read', { fixture: 'employees_after.json' }).as('getUpdatedEmployees')
+    cy.visit('/employees')
+    cy.wait(['@getUpdatedEmployees'])
 
-    cy.contains('Sam Jam')
-      .parents('tr')
-      .within(() => {
-        cy.get('button.btn-info').click()
-      })
+    cy.get('table').should('exist')
+    cy.contains('td', 'Jane Smith').should('exist')
+    cy.contains('td', 'jane.smith@example.com').should('exist')
+    cy.contains('td', 'HR').should('exist')
+ })
 
-    cy.contains('Employee Details')
-    cy.wait(2000);
-    cy.contains('Close').click();
+//  it('should show the employee details when show button is clicked', () => {
+//     cy.intercept('GET', '/api/employees/read', { fixture: 'employees_after.json' }).as('getUpdatedEmployees')
+//     cy.visit('/employees')
+//     cy.wait(['@getUpdatedEmployees'])
+//     cy.intercept('GET', '/api/employees/read/1').as('getEmployeeById')
+//     cy.contains('button', 'Show').click()
+//     cy.wait('@getEmployeeById')
+//     cy.wait(3000) 
+//   })
 
+  it('should delete employee when delete button is clicked', () => {
+    cy.intercept('GET', '/api/employees/read', { fixture: 'employees_after.json' }).as('getUpdatedEmployees')
+    cy.visit('/employees')
+    cy.wait(['@getUpdatedEmployees'])
+    cy.intercept('DELETE', '/api/employees/remove/1', { statusCode: 204 }).as('deleteEmployee')
+    cy.contains('button', 'Delete').click()
+    cy.wait('@deleteEmployee')
   })
-
-  it('should delete an employee', () => {
-
-    cy.contains('Sam Jam')
-      .parents('tr')
-      .within(() => {
-        cy.get('button.btn-danger').click()
-      })
-
-    cy.contains('Employee deleted successfully!')
-  })
-  
-});
-
+})

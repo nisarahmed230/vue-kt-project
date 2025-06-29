@@ -1,11 +1,11 @@
 export async function fetchWrapper<T>(
   url: string,
-  options: RequestInit = {} // ✅ default to empty object
+  options: RequestInit = {}
 ): Promise<T> {
   const response = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      ...(options.headers || {}), // ✅ guard against undefined headers
+      ...(options.headers || {}),
     },
     ...options,
   })

@@ -1,0 +1,59 @@
+[
+  {
+    "employeeId": 1,
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john.doe@example.com",
+    "phoneNumber": "1234567890",
+    "hireDate": "2023-01-15",
+    "salary": 70000,
+    "jobId": "J1001",
+    "department": "ENGINEERING",
+    "designation": "SENIOR_ENGINEER",
+    "employeeDetails": {
+      "dateOfBirth": "1990-05-20",
+      "maritalStatus": "Single",
+      "address": {
+        "street": "123 Main St",
+        "city": "Metropolis",
+        "state": "NY",
+        "zipCode": "10001"
+      }
+    },
+    "project": {
+      "projectId": 101,
+      "projectName": "Apollo",
+      "startDate": "2022-03-01",
+      "endDate": "2023-12-31"
+    }
+  },
+  {
+    "employeeId": 2,
+    "firstName": "Nohj",
+    "lastName": "Eod",
+    "email": "nohj.eod@example.com",
+    "phoneNumber": "0987654321",
+    "hireDate": "2023-01-15",
+    "salary": 80000,
+    "jobId": "J1001",
+    "department": "ENGINEERING",
+    "designation": "SENIOR_ENGINEER",
+    "employeeDetails": {
+      "dateOfBirth": "1990-05-20",
+      "maritalStatus": "Single",
+      "address": {
+        "street": "123 Main St",
+        "city": "Metropolis",
+        "state": "NY",
+        "zipCode": "10001"
+      }
+    },
+    "project": {
+      "projectId": 2,
+      "projectName": "Billing App",
+      "startDate": "2022-03-01",
+      "endDate": "2023-12-31"
+    }
+  }
+
+]

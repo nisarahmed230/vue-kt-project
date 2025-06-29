@@ -1,0 +1,14 @@
+[
+  {
+    "projectId": 1,
+    "projectName": "HR System",
+    "startDate": "2025-01-01",
+    "endDate": "2025-06-01"
+  },
+  {
+    "projectId": 2,
+    "projectName": "Billing App",
+    "startDate": "2025-02-15",
+    "endDate": "2025-07-30"
+  }
+]
