@@ -14,6 +14,7 @@ export const getAllEmployees = () =>
 export const deleteEmployee = (id: number) =>
   api.delete(`/employees/remove/${id}`)
 
+// Just to Test the commit
 
 export async function getEmployeesByDepartment(deptName:string): Promise<EmployeeDto[]> {
   return await fetchWrapper<EmployeeDto[]>(`http://localhost:8080/api/employees/read/department/${deptName}`);
